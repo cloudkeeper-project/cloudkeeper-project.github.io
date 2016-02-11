@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 560 400" width="560pt">
+  <defs>
+    <style type="text/css"><![CDATA[
+      @import url(https://fonts.googleapis.com/css?family=Merriweather+Sans:400,300);
+
+      text {
+        font-family: 'Merriweather Sans';
+        fill: black;
+        font-size: 11px;
+        font-weight: 300;
+      }
+
+      .h1 {
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .label {
+        text-anchor: middle;
+        dominant-baseline: central;
+      }
+
+      .abstraction {
+        fill: url(#abstraction-gradient);
+        stroke: #33bef2;
+        stroke-width: 1;
+        filter: url(#drop-shadow);
+      }
+
+      #abstraction-fade-stop-1 {
+        stop-color: #effaff;
+      }
+
+      #abstraction-fade-stop-2 {
+        stop-color: #9bd7ef;
+      }
+
+      .core {
+        fill: url(#core-gradient);
+        stroke: #be4b48;
+        stroke-width: 1;
+        filter: url(#drop-shadow);
+      }
+
+      #core-fade-stop-1 {
+        stop-color: #ffe5e5;
+      }
+
+      #core-fade-stop-2 {
+        stop-color: #ffa2a1;
+      }
+
+      .choice {
+        fill: url(#choice-gradient);
+        stroke: black;
+        stroke-width: 1;
+        filter: url(#drop-shadow);
+      }
+
+      #choice-fade-stop-1 {
+        stop-color: #eeeeee;
+      }
+
+      #choice-fade-stop-2 {
+        stop-color: #cccccc;
+      }
+
+      .project {
+        fill: url(#project-gradient);
+        stroke: #f69240;
+        stroke-width: 1;
+        filter: url(#drop-shadow);
+      }
+
+      #project-fade-stop-1 {
+        stop-color: #ffebdb;
+      }
+
+      #project-fade-stop-2 {
+        stop-color: #ffbe86;
+      }
+    ]]></style>
+    <linearGradient id="abstraction-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="abstraction-fade-stop-1" offset="5%"/>
+      <stop id="abstraction-fade-stop-2" offset="95%"/>
+    </linearGradient>
+    <linearGradient id="core-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="core-fade-stop-1" offset="5%"/>
+      <stop id="core-fade-stop-2" offset="95%"/>
+    </linearGradient>
+    <linearGradient id="choice-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="choice-fade-stop-1" offset="5%"/>
+      <stop id="choice-fade-stop-2" offset="95%"/>
+    </linearGradient>
+    <linearGradient id="project-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="project-fade-stop-1" offset="5%"/>
+      <stop id="project-fade-stop-2" offset="95%"/>
+    </linearGradient>
+
+    <filter id="drop-shadow" width="150%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="1" dy="1" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect class="abstraction" x="5" y="5" width="550" height="230"/>
+  <text class="h1" x="10" y="22.5">“All-Inclusive” Abstraction Layer</text>
+
+  <rect class="project" x="10" y="175" width="540" height="50"/>
+  <text class="label" y="200">
+    <tspan class="h1" x="275" dy="-.25em">Simplified Runtime-Context Provider</tspan>
+    <tspan x="275" dy="1.6em">loads configuration and instantiates appropriate runtime-context provider</tspan>
+  </text>
+
+  <rect class="project" x="10" y="100" width="540" height="65"/>
+  <text class="label" y="132.5">
+    <tspan class="h1" x="275" dy="-.75em">Forked Simple-Module Executor</tspan>
+    <tspan x="275" dy="1.6em">invoked in separate JVM, reads runtime state from stdin,</tspan>
+    <tspan x="275" dy="1.4em">instantiates local simple-module executor, writes status to stdout</tspan>
+  </text>
+
+  <rect class="project" x="10" y="40" width="540" height="50"/>
+  <text class="label" y="65">
+    <tspan class="h1" x="275" dy="-.25em">Workflow Service</tspan>
+    <tspan x="275" dy="1.6em">
+      provides pre-configured CloudKeeper  environments (in particular, a workflow interpreter)
+    </tspan>
+  </text>
+
+
+  <rect class="core" x="5" y="250" width="150" height="145"/>
+  <text class="h1" x="10" y="267.5">Core</text>
+
+  <rect class="project" x="10" y="280" width="80" height="30"/>
+  <text class="label" x="50" y="295">Interpreter</text>
+
+  <rect class="project" x="100" y="280" width="50" height="30"/>
+  <text class="label" x="125" y="295">DSL</text>
+
+  <rect class="project" x="10" y="320" width="140" height="30"/>
+  <text class="label" x="80" y="335">API</text>
+
+
+  <rect class="choice" x="160" y="325" width="185" height="70"/>
+  <text class="h1" x="165" y="342.5">Staging</text>
+
+  <rect class="project" x="165" y="355" width="40" height="30"/>
+  <text class="label" x="185" y="370">file</text>
+
+  <rect class="project" x="215" y="355" width="35" height="30"/>
+  <text class="label" x="232.5" y="370">S3</text>
+
+  <rect class="project" x="260" y="355" width="80" height="30"/>
+  <text class="label" x="300" y="370">in-memory</text>
+
+
+  <rect class="choice" x="350" y="325" width="205" height="70"/>
+  <text class="h1" x="355" y="342.5">Simple-Module Executor</text>
+
+  <rect class="project" x="355" y="355" width="55" height="30"/>
+  <text class="label" x="382.5" y="370">local</text>
+
+  <rect class="project" x="420" y="355" width="60" height="30"/>
+  <text class="label" x="450" y="370">forking</text>
+
+  <rect class="project" x="490" y="355" width="60" height="30"/>
+  <text class="label" x="520" y="370">DRMAA</text>
+
+
+  <rect class="choice" x="160" y="250" width="395" height="70"/>
+  <text class="h1" x="165" y="267.5">Runtime-Context Provider</text>
+
+  <rect class="project" x="165" y="280" width="160" height="30"/>
+  <text class="label" x="245" y="295">DSL class walker</text>
+
+  <rect class="project" x="335" y="280" width="125" height="30"/>
+  <text class="label" x="397.5" y="295">Maven-based</text>
+</svg>

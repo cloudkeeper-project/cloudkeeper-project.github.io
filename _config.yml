@@ -1,0 +1,33 @@
+# Welcome to Jekyll!
+#
+# This config file is meant for settings that affect your whole blog, values
+# which you are expected to set up once and rarely need to edit after that.
+# For technical reasons, this file is *NOT* reloaded automatically when you use
+# 'jekyll serve'. If you change this file, please restart the server process.
+
+# Site settings
+title: The CloudKeeper Project
+email: info@cloudkeeper.xyz
+description: > # this means to ignore newlines until "baseurl:"
+  CloudKeeper is a domain-specific language (DSL) and runtime systems for
+  writing and running dataflows (also called workflows). It is intended to be
+  used alongside other languages based on the Java Virtual Machine (JVM).
+baseurl: "" # the subpath of your site, e.g. /blog
+url: "http://cloudkeeper.xyz" # the base hostname & protocol for your site
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - '*.iml'
+
+navigation:
+  -
+    url: /language.html
+    exposedurl: /language
+    shorttitle: Language
+  -
+    url: /runtime
+    exposedurl: /runtime
+    shorttitle: Runtime System
+
+kramdown:
+  input: GFM

@@ -1,0 +1,20 @@
+<svg id="common-svg" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="port-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="port-fade-stop-1" offset="5%"/>
+      <stop id="port-fade-stop-2" offset="95%"/>
+    </linearGradient>
+
+    <filter id="drop-shadow" width="150%" height="150%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="1" dy="1" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>

@@ -1,0 +1,147 @@
+@import url(https://fonts.googleapis.com/css?family=Merriweather+Sans:400,300);
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  font-family: 'Merriweather Sans', sans-serif;
+  font-weight: 300;
+  margin-top: 51px;
+  padding-bottom: 20px;
+}
+
+/* Inlined SVG DOM serving as "library" */
+#common-svg {
+  left: 0;
+  top: 0;
+  height: 0;
+  width: 0;
+  position: absolute;
+  visibility: hidden;
+}
+
+svg {
+  font-size: 11px;
+}
+
+svg text {
+  pointer-events: none;
+}
+
+ol ol, ul ol {
+  list-style-type: lower-roman;
+}
+
+ul ul ol, ul ol ol, ol ul ol, ol ol ol {
+  list-style-type: lower-alpha;
+}
+
+.vcenter {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
+
+.fill-width {
+  width: 100%;
+}
+
+.figure {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#toc-container {
+  padding-top: 16px;
+}
+
+#logo {
+  position: fixed;
+  top: 0;
+  right: 0;
+  border: 0;
+  width: 149px;
+  height: 149px;
+  z-index: 1031;
+}
+
+/* MARKETING CONTENT
+-------------------------------------------------- */
+
+.marketing h2 {
+  font-weight: normal;
+}
+
+
+/* Featurettes
+------------------------- */
+
+/* Space out the Bootstrap <hr> more */
+.featurette-divider {
+  margin: 20px 0;
+}
+
+/* Thin out the marketing headings */
+.featurette-heading {
+  font-weight: 300;
+}
+
+/* RESPONSIVE CSS
+-------------------------------------------------- */
+
+@media (min-width: 768px) {
+  .jumbotron .h1, .jumbotron h1 {
+    font-size: 48px;
+  }
+
+  /* Bump up size of carousel content */
+  .carousel-caption p {
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  .featurette-heading {
+    font-size: 36px;
+  }
+}
+
+@media (min-width: 992px) {
+  .jumbotron .h1, .jumbotron h1 {
+    font-size: 63px;
+  }
+
+  .vcenter-md {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+  }
+}
+
+/* If height is less than 480, switch to  */
+@media (max-height: 480px) {
+  body {
+    margin-top: 0;
+  }
+
+  .navbar {
+    margin-bottom: 0;
+  }
+
+  .navbar-fixed-top {
+    position: static;
+  }
+}
+
+/* Ensure that anchors have a position that is in the visible area
+   (and not behind the nav bar). */
+@media (min-height: 481px) {
+  h1[id], h2[id], h3[id] {
+    /* h1, h2, h3 normally have style "margin-top: 20" */
+    padding-top: 71px;
+    margin-top: -51px;
+  }
+
+  ul[id] {
+    padding-top: 51px;
+    margin-top: -51px;
+  }
+}
+

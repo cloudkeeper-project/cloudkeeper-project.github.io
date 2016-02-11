@@ -1,0 +1,182 @@
+---
+layout: default
+title: "The CloudKeeper DSL and Runtime System"
+---
+
+{% include common-svg.svg %}
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-2 vcenter">
+        <img class="img-responsive fill-width" src="assets/cloudkeeper-logo.svg"/>
+      </div><!--
+      no whitespace
+      --><div class="col-sm-10 vcenter">
+        <h1>CloudKeeper<br><small>Dataflow programming on the JVM</small></h1>
+      </div>
+    </div>
+    <p>
+      CloudKeeper is a domain-specific language and runtime system for implementing and running dataflows on the Java Virtual Machine. Designed to facilitate “programming in the large”, CloudKeeper is entirely general-purpose and abstracts away concerns such as data transfer, serialization, scheduling, checkpointing, and package/dependency management.
+    </p>
+    <p><a class="btn btn-primary btn-lg" href="{{ '/language' | prepend: site.baseurl }}" role="button">Learn more &raquo;</a></p>
+  </div>
+</div>
+
+<!-- Marketing messaging and featurettes
+================================================== -->
+<!-- Wrap the rest of the page in another container to center all the content. -->
+
+<div class="container marketing">
+  <div class="row featurette">
+    <div class="col-md-7 vcenter-md">
+      <h2 class="featurette-heading">Programming in the Large. <span class="text-muted">Declarative Style.</span></h2>
+      <p class="lead">
+        The functional units in CloudKeeper dataflows are called <em>modules</em>, and they have in- and out-<em>ports</em>.
+        Orchestrate domain logic by simply instantiating modules and creating connections between ports.
+      </p>
+    </div><!--
+    no whitespace
+    --><div class="col-md-5 vcenter-md">
+      <svg class="center-block img-responsive" xmlns="http://www.w3.org/2000/svg" width="330px" viewBox="0 10 330 205">
+        <defs>
+          <circle id="port" r="10"/>
+          <marker id="connection-marker" viewBox="0 0 28 12" refX="34" refY="6" markerUnits="userSpaceOnUse"
+                  markerWidth="15" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 16 6 L 0 12 z"/>
+          </marker>
+        </defs>
+
+        <rect id="M" class="module" x="15" y="15" rx="7" ry="7" width="300" height="195"/>
+
+        <path id="a->i" class="connection" d="M15 82.5 C 75 15, 135 15, 195 45"/>
+        <polyline id="a->d" class="connection" points="15 82.5 75 75"/>
+        <polyline id="b->e" class="connection" points="15 112.5 75 105"/>
+        <polyline id="c->o" class="connection" points="15 142.5 195 180"/>
+        <polyline id="f->j" class="connection" points="150 60 195 75"/>
+        <polyline id="g->k" class="connection" points="150 90 195 105"/>
+        <polyline id="h->n" class="connection" points="150 120 195 150"/>
+        <polyline id="l->q" class="connection" points="270 60 315 82.5"/>
+        <polyline id="m->r" class="connection" points="270 90 315 112.5"/>
+        <polyline id="p->s" class="connection" points="270 165 315 142.5"/>
+
+        <use id="a" class="inport" x="15" y="82.5" xlink:href="#port"/>
+        <use id="b" class="inport" x="15" y="112.5" xlink:href="#port"/>
+        <use id="c" class="inport" x="15" y="142.5" xlink:href="#port"/>
+        <use id="q" class="outport" x="315" y="82.5" xlink:href="#port"/>
+        <use id="r" class="outport" x="315" y="112.5" xlink:href="#port"/>
+        <use id="s" class="outport" x="315" y="142.5" xlink:href="#port"/>
+
+        <rect id="N" class="module submodule" x="75" y="45" rx="7" ry="7" width="75" height="90"/>
+        <use id="d" class="inport" x="75" y="75" xlink:href="#port"/>
+        <use id="e" class="inport" x="75" y="105" xlink:href="#port"/>
+        <use id="f" class="outport" x="150" y="60" xlink:href="#port"/>
+        <use id="g" class="outport" x="150" y="90" xlink:href="#port"/>
+        <use id="h" class="outport" x="150" y="120" xlink:href="#port"/>
+
+        <rect id="P" class="module submodule" x="195" y="30" rx="7" ry="7" width="75" height="90"/>
+        <use id="i" class="inport" x="195" y="45" xlink:href="#port"/>
+        <use id="j" class="inport" x="195" y="75" xlink:href="#port"/>
+        <use id="k" class="inport" x="195" y="105" xlink:href="#port"/>
+        <use id="l" class="outport" x="270" y="60" xlink:href="#port"/>
+        <use id="m" class="outport" x="270" y="90" xlink:href="#port"/>
+
+        <rect id="Q" class="module submodule" x="195" y="135" rx="7" ry="7" width="75" height="60"/>
+        <use id="n" class="inport" x="195" y="150" xlink:href="#port"/>
+        <use id="o" class="inport" x="195" y="180" xlink:href="#port"/>
+        <use id="p" class="outport" x="270" y="165" xlink:href="#port"/>
+      </svg>
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-5 col-md-push-7 col-lg-6 col-lg-push-6 vcenter-md">
+      <h2 class="featurette-heading">Scalable. <span class="text-muted">Write once, run everywhere.</span></h2>
+      <p class="lead">
+        Debug dataflows in a single JVM on a laptop, and deploy in the cloud – without changing a single line of code. CloudKeeper abstracts away low-level details such as serialization, data movement, check-pointing, scheduling, or dependency/package management.
+      </p>
+    </div><!--
+    no whitespace
+    --><div class="col-md-7 col-md-pull-5 col-lg-6 col-lg-pull-6 vcenter-md">
+      {% highlight java %}
+@CompositeModulePlugin("Analyzes DNA")
+public abstract class GenomeAnalysisModule
+    extends CompositeModule<GenomeAnalysisModule> {
+  public abstract InPort<FASTQ> dnaFragments();
+  public abstract OutPort<PDF> report();
+
+  AlignModule alignModule = child(AlignModule.class)
+    .dnaFragments().from(dnaFragments())
+    .reference().from(value(Constants.REFERENCE_GENOME));
+  StatsModule statsModule = child(StatsModule.class)
+    .dnaFragments().from(dnaFragments());
+  ReportModule reportModule = child(ReportModule.class)
+    .mutations().from(align.mutations())
+    .stats().from(stats.stats());
+
+  { report().from(reportModule.pdf()); }
+}{% endhighlight %}
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7 vcenter-md">
+      <h2 class="featurette-heading">For Engineers. <span class="text-muted">By Engineers.</span></h2>
+      <p class="lead">
+        Embed CloudKeeper dataflows into other software-engineering projects. Write dataflows textually in the CloudKeeper <em>internal domain-specific language</em> that inherits Java’s type system as well as its excellent IDE support.
+      </p>
+    </div><!--
+    no whitespace
+    --><div class="col-md-5 vcenter-md">
+      <img class="img-responsive img-rounded center-block" src="assets/refactor.jpg" width="500" height="300" alt="Easy refactoring in IDE"/>
+    </div>
+  </div>
+
+  <hr class="featurette-divider">
+
+  <div class="row featurette">
+    <div class="col-md-7 col-md-push-5 vcenter-md">
+      <h2 class="featurette-heading">Lightweight. <span class="text-muted">Library, not a framework.</span></h2>
+      <p class="lead">
+        Use CloudKeeper as alternative to lower-level concurrency concepts such as threads, Java executor services, actor systems, etc. CloudKeeper is modular and versatile: Keep intermediate results as in-memory Java objects, in the file system, or in a cloud-storage service. Similarly, processing of individual tasks may be as different as using an existing thread pool or a distributed resource manager like Grid Engine.
+      </p>
+    </div><!--
+    no whitespace
+    --><div class="col-md-5 col-md-pull-7 vcenter-md">
+      {% highlight xml %}
+<dependency>
+  <groupId>xyz.cloudkeeper.core</groupId>
+  <artifactId>cloudkeeper-api</artifactId>
+</dependency>
+<dependency>
+  <groupId>xyz.cloudkeeper.core</groupId>
+  <artifactId>cloudkeeper-model</artifactId>
+</dependency>{% endhighlight %}
+    </div>
+  </div>
+</div>
+
+<script>
+  $(function() {
+    $(".inport").tooltip({
+        'title': 'in-port',
+        'container': 'body',
+        'placement': 'left'
+    });
+    $(".outport").tooltip({
+        'title': 'out-port',
+        'container': 'body',
+        'placement': 'right'
+    });
+    $(".submodule").tooltip({
+        'title': 'submodule',
+        'container': 'body',
+        'placement': 'bottom'
+    });
+  });
+</script>

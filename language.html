@@ -1,0 +1,450 @@
+---
+layout: structured
+title: "The CloudKeeper Language"
+---
+
+{% include common-svg.svg %}
+
+<h1 id="abstract">Languages and Abstraction</h1>
+<p>
+  During the last decade – as <a href="https://en.wikipedia.org/wiki/Moore%27s_law">Moore’s law</a> ceased to predict CPU clock speeds, hardware became commoditized and then increasingly virtualized, and “big data” evolved as a ubiquitous trend – <a href="https://en.wikipedia.org/wiki/C…">concurrency</a> (finally) moved into mainstream focus. This sparked renewed interest for programming paradigms that previously had attracted only limited attention outside of academia, like <a href="https://en.wikipedia.org/wiki/Functional_programming">functional programming</a> or the <a href="https://en.wikipedia.org/wiki/Actor_model">actor model</a>. Adoption in practice was spurred by new sometimes multi-paradigm languages such as <a href="http://www.scala-lang.org">Scala</a> or <a href="http://clojure.org">Clojure</a>, by the addition of functional elements to mainstream languages like Java, and by frameworks like <a href="http://spark.apache.org">Spark</a>, <a href="https://hadoop.apache.org">Hadoop</a>, or <a href="http://akka.io">Akka</a> actors. Interestingly, the <a href="http://docs.oracle.com/javase/specs/jvms/se8/html/index.html">Java Virtual Machine</a> has remained a solid foundation throughout. Despite the recent uptake in OS-level virtualization (<a href="http://www.docker.com">Docker</a> comes to mind), and despite the ensuing obsolescence of some JVM features (for instance, application isolation), there is nothing in sight that could replace the JVM anytime soon.
+</p>
+<p>
+  While the JVM is thus becoming increasingly polyglot, CloudKeeper is (to the best of our knowledge) the first JVM-based dataflow programming language that allows type-safe integration with existing JVM-based languages. Dataflow programming, and thus CloudKeeper, is particularly well-suited for “programming in the large”, that is, integrating and orchestrating smaller software modules in a high-level, declarative fashion. Thus, CloudKeeper gives an up-to-date interpretation of the original Java motto: <a href="https://en.wikipedia.org/wiki/Write_once,_run_anywhere">“Write once, run everywhere”</a>. Thanks to its abstraction of low-level concerns such as scheduling, synchronization, or data movement, CloudKeeper dataflows are not just portable across operating systems but also between single-machine development environments and distributed production environments in the cloud.
+</p>
+
+<h1 id="example">Dataflow Programming</h1>
+<p>
+  Suppose we plan to develop software that takes as input the DNA fragments of a cancer patient and produces as output a report containing treatment recommendations for the oncologist. A bird’s-eye view of the necessary steps could look as follows.
+</p>
+<svg class="center-block img-responsive figure" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 255" width="380px">
+  <defs>
+    <linearGradient id="step-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop id="step-fade-stop-1" offset="5%"/>
+      <stop id="step-fade-stop-2" offset="95%"/>
+    </linearGradient>
+
+    <marker id="transition-marker" viewBox="0 0 16 12" refX="0" refY="6" markerUnits="userSpaceOnUse"
+            markerWidth="8" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 16 6 L 0 12 z"/>
+    </marker>
+  </defs>
+
+  <line class="transition" x1="50.897643" y1="45.480475" x2="55.082993" y2="60.014748"/>
+  <line class="transition" x1="71.282843" y1="110.47801" x2="75.75606" y2="125.05781"/>
+  <line class="transition" x1="91.30008" y1="175.4779" x2="95.786247" y2="190.0598"/>
+  <line class="transition" x1="145.5" y1="219.99998" x2="169.6" y2="219.99998"/>
+  <line class="transition" x1="249.64308" y1="199.71766" x2="277.18531" y2="180.87275"/>
+  <line class="transition" x1="125.5" y1="155.00002" x2="149.6" y2="155.00002"/>
+  <line class="transition" x1="105.5" y1="89.999987" x2="129.6" y2="89.999987"/>
+  <line class="transition" x1="85.5" y1="25.00002" x2="109.6" y2="25.00002"/>
+  <line class="transition" x1="200.5" y1="25.000013" x2="284.6" y2="25.000013"/>
+  <line class="transition" x1="318.12435" y1="134.50571" x2="330.20222" y2="55.280542"/>
+  <line class="transition" x1="221.10172" y1="134.65294" x2="306.59486" y2="52.217306"/>
+  <line class="transition" x1="220.15529" y1="73.081017" x2="285.6308" y2="45.493645"/>
+
+  <rect class="step" x="5" y="5" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" x="45" y="25" dominant-baseline="middle">Alignment</text>
+
+  <rect class="step" x="25" y="70" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="90" dominant-baseline="middle">
+    <tspan x="65" dy="-0.3em">Variant</tspan>
+    <tspan x="65" dy="1.4em">Calling</tspan>
+  </text>
+
+  <rect class="step" x="45" y="135" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="155" dominant-baseline="middle">
+    <tspan x="85" dy="-0.3em">Genomic</tspan>
+    <tspan x="85" dy="1.4em">Annotations</tspan>
+  </text>
+
+  <rect class="step" x="65" y="200" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" x="105" y="220" dominant-baseline="middle">Classification</text>
+
+  <rect class="step" x="120" y="5" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="25" dominant-baseline="middle">
+    <tspan x="160" dy="-0.3em">Alignment</tspan>
+    <tspan x="160" dy="1.4em">Statistics</tspan>
+  </text>
+
+  <rect class="step" x="140" y="70" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="90" dominant-baseline="middle">
+    <tspan x="180" dy="-0.3em">Variant</tspan>
+    <tspan x="180" dy="1.4em">Statistics</tspan>
+  </text>
+
+  <rect class="step" x="160" y="135" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="155" dominant-baseline="middle">
+    <tspan x="200" dy="-0.3em">Annotation</tspan>
+    <tspan x="200" dy="1.4em">Statistics</tspan>
+  </text>
+
+  <rect class="step" x="180" y="200" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" x="220" y="220" dominant-baseline="middle">Filtering</text>
+
+  <rect class="step" x="275" y="135" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="155" dominant-baseline="middle">
+    <tspan x="315" dy="-0.3em">Knowledge</tspan>
+    <tspan x="315" dy="1.4em"> Base</tspan>
+  </text>
+
+  <rect class="step" x="295" y="5" rx="5" ry="5" width="80" height="40"/>
+  <text text-anchor="middle" y="25" dominant-baseline="middle">
+    <tspan x="335" dy="-0.3em">Report</tspan>
+    <tspan x="335" dy="1.4em">Generation</tspan>
+  </text>
+</svg>
+<p>
+  Each of the individual steps in this flow chart represent software modules that can be implemented independently. For instance, sequence alignment is a well-know problem, and it is reasonably straightforward to convert a textbook algorithm (say, <a href="https://en.wikipedia.org/wiki/Smith–Waterman_algorithm">Smith-Waterman</a>) into plain Java. Optimizing such an implementation is often no trivial task, and traditional imperative programming languages and their standard libraries allow for many low-level techniques (say, ensuring locality of reference, avoiding lock contention, etc.) to ensure good performance.
+</p>
+<p>
+  Now what are best practices to integrate all these software modules so to comprise the entire genome-analysis software? One that is maintainable, scalable, and robust? While plain Java of course is expressive enough, it is in fact “overrich” for the task – giving a degree of freedom and requiring attention to low-level details that makes it hard to see the forest for the tree. For instance, imperative programming is inherently sequential, so concurrency requires the explicit use of low-level primitives such as threads and semaphores. Moreover, high-level features like checkpointing, scheduling, or data movement across machines would have to be explicitly implemented.
+</p>
+<p>
+  It quickly becomes obvious that an abstraction layer is needed that facilitates the aforementioned “programming in the large”. Generally speaking, data flows are an appropriate abstraction for problems that can be described by flow charts, and CloudKeeper is an implementation for tight integration with software modules written in JVM-based languages.
+</p>
+
+<h2 id="example">Concrete Example</h2>
+<p>
+  For the purpose of a concise example, let us assume greatly simplified requirements for the genome-analysis dataflow. The input is a collection of DNA fragments; that is, character sequences consisting of the letters A, G, C, and T (corresponding to the four bases adenine, guanine, cytosine, and thymine). The output report is supposed to be plain text, mentioning the average length of all DNA fragment and whether the sequence “ACTG” was found in a fragment. As an example, for the input on the left-hand side we expect the “report” shown on the right-hand side:
+</p>
+<div class="row">
+  <div class="col-xs-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Input</h3>
+      </div>
+      <div class="panel-body">
+        ACTGTA<br/>
+        CGATA<br/>
+        CGGA
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Output</h3>
+      </div>
+      <div class="panel-body">
+        <samp>Avg. read length is 5.00, and sequence 'ACTG' was detected.</samp>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 id="source">Source Code</h2>
+<p>
+  We assume that three independent software modules have already been implemented in plain Java:
+</p>
+<dl class="dl-horizontal">
+  <dt>Average Line Length</dt>
+  <dd>Given a character sequence, computes the average length of all newline-separated parts.</dd>
+  <dt>Find</dt>
+  <dd>Given a text and a subsequence, determines whether the subsequence is contained anywhere in the text.</dd>
+  <dt>Report</dt>
+  <dd>Given (a) the average line length, (b) a subsequence, and (c) whether the subsequence was found, produces the textual report as specified above.</dd>
+</dl>
+<p>
+  A suitable CloudKeeper dataflow (“composite module” in CloudKeeper terminology) could hence look as shown in the following diagram. Click on the individual modules to see the source code below.
+</p>
+<svg class="center-block img-responsive figure" xmlns="http://www.w3.org/2000/svg" viewBox="-85 -5 590 215" width="590px">
+  <defs>
+    <marker id="connection-marker" viewBox="0 0 16 12" refX="16" refY="6" markerUnits="userSpaceOnUse"
+            markerWidth="8" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 16 6 L 0 12 z"/>
+    </marker>
+  </defs>
+
+  <g id="M">
+    <rect class="module" x="-50" y="0" rx="7" ry="7" width="520" height="200"/>
+    <polyline id="a->d" class="connection" points="-20 83 5 45"/>
+    <polyline id="a->f" class="connection" points="-20 87 15 125"/>
+    <polyline id="c->g" class="connection" points="5 173 15 155"/>
+    <path id="c->j" class="connection" d="M 5 177  C 50 190, 50 190, 145 190  S 170 105, 230 95"/>
+    <polyline id="e->i" class="connection" points="190 45 230 65"/>
+    <polyline id="h->k" class="connection" points="185 140 230 125"/>
+    <polyline id="l->b" class="connection" points="410 95 440 95"/>
+    <rect id="a" class="inport" x="-80" y="75" width="60" height="20"/>
+    <text text-anchor="middle" x="-50" y="90">reads</text>
+    <rect id="b" class="outport" x="440" y="85" width="60" height="20"/>
+    <text text-anchor="middle" x="470" y="100">report</text>
+
+    <text id="c" text-anchor="middle" x="-20" y="180">“ACTG”</text>
+  </g>
+
+  <g id="N">
+    <rect class="module" x="30" y="10" rx="7" ry="7" width="140" height="60"/>
+    <text text-anchor="middle" x="100" y="25">avgLineLengthModule</text>
+    <rect id="d" class="inport" x="5" y="35" width="50" height="20"/>
+    <text text-anchor="middle" x="30" y="50">text</text>
+    <rect id="e" class="outport" x="150" y="35" width="40" height="20"/>
+    <text text-anchor="middle" x="170" y="50">avg</text>
+  </g>
+
+  <g id="O">
+    <rect class="module" x="50" y="90" rx="7" ry="7" width="100" height="90"/>
+      <text text-anchor="middle" x="100" y="105">findModule</text>
+    <rect id="f" class="inport" x="15" y="115" width="70" height="20"/>
+    <text text-anchor="middle" x="50" y="130">text</text>
+    <rect id="g" class="inport" x="15" y="145" width="70" height="20"/>
+    <text text-anchor="middle" x="50" y="160">substring</text>
+    <rect id="h" class="outport" x="115" y="130" width="70" height="20"/>
+    <text text-anchor="middle" x="150" y="145">wasFound</text>
+  </g>
+
+  <g id="P">
+    <rect class="module" x="280" y="30" rx="7" ry="7" width="100" height="120"/>
+    <text text-anchor="middle" x="330" y="45">reportModule</text>
+    <rect id="i" class="inport" x="230" y="55" width="100" height="20"/>
+    <text text-anchor="middle" x="280" y="70">avgLineLength</text>
+    <rect id="j" class="inport" x="230" y="85" width="100" height="20"/>
+    <text text-anchor="middle" x="280" y="100">subsequence</text>
+    <rect id="k" class="inport" x="230" y="115" width="100" height="20"/>
+    <text text-anchor="middle" x="280" y="130">wasFound</text>
+    <rect id="l" class="outport" x="350" y="85" width="60" height="20"/>
+    <text text-anchor="middle" x="380" y="100">report</text>
+  </g>
+</svg>
+
+<ul id="dataflow-example-tabs" class="nav nav-pills">
+  <li class="active">
+    <a data-toggle="tab" data-visible="#M, #N, #O, #P" data-module="M" href="#genomeAnalysisModule">
+      Composite Module
+    </a>
+  </li>
+  <li><a data-toggle="tab" data-visible="#N" data-module="N" href="#avgLineLengthModule">Average Line Length</a></li>
+  <li><a data-toggle="tab" data-visible="#O" data-module="O" href="#findModule">Find</a></li>
+  <li><a data-toggle="tab" data-visible="#P" data-module="P" href="#reportModule">Report</a></li>
+</ul>
+<div class="tab-content">
+  <div id="genomeAnalysisModule" class="tab-pane in active">
+    <!-- <h3 data-toc-skip>Composite Module</h3> -->
+    {% highlight java %}
+@CompositeModulePlugin("Analyzes String consisting of DNA fragments")
+public abstract class GenomeAnalysisModule
+    extends CompositeModule<GenomeAnalysisModule> {
+  public abstract InPort<String> reads();
+  public abstract OutPort<String> report();
+
+  InputModule<String> sequence = value("ACTG");
+
+  AvgLineLengthModule avgLineLengthModule = child(AvgLineLengthModule.class)
+    .text().from(reads());
+  FindModule findModule = child(FindModule.class)
+    .text().from(reads())
+    .substring().from(sequence);
+  ReportModule reportModule = child(ReportModule.class)
+    .avgLineLength().from(avgLineLengthModule.avg())
+    .subsequence().from(sequence)
+    .wasDetected().from(findModule.wasFound());
+
+  { report().from(reportModule.report()); }
+}{% endhighlight %}
+  </div>
+  <div id="avgLineLengthModule" class="tab-pane">
+<!--    <h3 data-toc-skip>Simple Module: Average Line Length</h3>
+    <p>
+      The average-line-length module has a single in-port of type <code>String</code> and a single out-port of type
+      <code>Double</code>. The module splits the given input string at newline characters and computes, over all
+      lines, the average line length.
+    </p>
+    -->
+    {% highlight java %}
+@SimpleModulePlugin("Computes the average line length in a text")
+public abstract class AvgLineLengthModule
+    extends SimpleModule<AvgLineLengthModule> {
+  public abstract InPort<String> text();
+  public abstract OutPort<Double> avg();
+
+  @Override
+  public void run() throws IOException {
+    try (BufferedReader reader
+        = new BufferedReader(new StringReader(text().get()))) {
+      avg().set(
+        reader.lines().collect(Collectors.averagingInt(String::length))
+      );
+    }
+  }
+}{% endhighlight %}
+  </div>
+  <div id="findModule" class="tab-pane">
+    {% highlight java %}
+@SimpleModulePlugin("Determines whether a text contains a substring")
+public abstract class FindModule extends SimpleModule<FindModule> {
+  public abstract InPort<String> text();
+  public abstract InPort<String> substring();
+  public abstract OutPort<Boolean> wasFound();
+
+  @Override
+  public void run() throws IOException {
+    String substring = substring().get();
+    try (BufferedReader reader
+        = new BufferedReader(new StringReader(text().get()))) {
+      wasFound().set(
+        reader.lines().anyMatch(line -> line.contains(substring))
+      );
+    }
+  }
+}{% endhighlight %}
+  </div>
+  <div id="reportModule" class="tab-pane">
+    {% highlight java %}
+@SimpleModulePlugin("Aggregates results into a report")
+public abstract class ReportModule extends SimpleModule<ReportModule> {
+  public abstract InPort<Double> avgLineLength();
+  public abstract InPort<String> subsequence();
+  public abstract InPort<Boolean> wasDetected();
+  public abstract OutPort<String> report();
+
+  @Override
+  public void run() {
+    report().set(String.format(
+      "Report: Avg. read length is %.2f, and sequence '%s' was%s detected.",
+      avgLineLength().get(), subsequence().get(),
+      wasDetected().get() ? "" : " not"
+    ));
+  }
+}{% endhighlight %}
+  </div>
+</div>
+
+<h1 id="model">Object Model</h1>
+<p>
+  The CloudKeeper DSL is a convenient and concise way to express dataflows. It is based on the idea of using Java language constructs to represent CloudKeeper language constructs. For instance, as seen in the <a href="#dataflow-example-tabs">above example</a>, <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.1">Java class declarations</a> are used to represent CloudKeeper <em>module</em> declarations, and <a href="https://docs.oracle.com/javase/specs/jls/se8/html/jls-8.html#jls-8.4">Java method declarations</a> are used to represent CloudKeeper <em>port</em> declarations.
+</p>
+<p>
+  Nonetheless, the DSL is an entirely <em>optional</em> component when using CloudKeeper. In particular, the Java language constructs used to define CloudKeeper language constructs are immediately translated into an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">abstract syntax tree</a>. In order to interpret and execute a dataflow, CloudKeeper then transforms the abstract syntax tree into an <a href="https://en.wikipedia.org/wiki/Intermediate_language">intermediate representation</a>. This transformation includes the following steps:
+</p>
+<dl class="dl-horizontal">
+  <dt>Linking</dt>
+  <dd>Resolving symbolic references (such as <code>java.lang.String</code>) into object references.</dd>
+  <dt>Verification</dt>
+  <dd>Ensuring the consistency of invocations with their definitions, checking type safety, etc.</dd>
+  <dt>Optimization</dt>
+  <dd>Precomputing frequently needed information like, e.g., dependency relations between ports.</dd>
+</dl>
+<p>
+  The following example shows how to programmatically create an abstract syntax tree for the above genome-analysis composite module. Thanks to <a href="https://en.wikipedia.org/wiki/Java_Architecture_for_XML_Binding">JAXB</a> annotations on the object-model classes, the abstract syntax tree can be mapped to the XML representation also shown below.
+</p>
+<ul id="ast-tabs" class="nav nav-pills">
+  <li class="active">
+    <a data-toggle="tab" href="#ast">Abstract Syntax Tree</a>
+  </li>
+  <li>
+    <a data-toggle="tab" href="#xml">XML</a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div id="ast" class="tab-pane in active">
+    {% highlight java %}
+new MutableCompositeModuleDeclaration()
+  .setSimpleName("GenomeAnalysisModule")
+  .setTemplate(
+    new MutableCompositeModule()
+      .setDeclaredPorts(Arrays.asList(
+        new MutableInPort()
+          .setSimpleName("reads")
+          .setType(
+            new MutableDeclaredType()
+              .setDeclaration(String.class.getName())
+          ),
+        /* ... */
+      ))
+      .setModules(Arrays.asList(
+        new MutableInputModule()
+          .setSimpleName("sequence")
+          .setValue("ACTG"),
+        new MutableProxyModule()
+          .setSimpleName("avgLineLengthModule")
+          .setDeclaration("xyz.cloudkeeper.samples.maven.AvgLineLengthModule"),
+        /* ... */
+      ))
+      .setConnections(Arrays.asList(
+        new MutableParentInToChildInConnection()
+          .setFromPort("reads")
+          .setToModule("avgLineLengthModule")
+          .setToPort("text"),
+        /* ... */
+      ))
+    );
+    {% endhighlight %}
+  </div>
+  <div id="xml" class="tab-pane">
+    {% highlight xml %}
+<composite-module-declaration>
+  <simple-name>GenomeAnalysisModule</simple-name>
+  <template>
+    <ports>
+      <in-port>
+        <name>reads</name>
+        <declared-type ref="java.lang.String"/>
+      </in-port>
+      <!-- ... -->
+    </ports>
+    <modules>
+      <input-module>
+        <simple-name>sequence</simple-name>
+        <declared-type ref="java.lang.String"/>
+        <raw ref="cloudkeeper.serialization.StringMarshaler">
+          <serialized-as-byte-stream id="">QUNURw==</serialized-as-byte-stream>
+        </raw>
+      </input-module>
+      <proxy-module ref="xyz.cloudkeeper.samples.maven.AvgLineLengthModule">
+        <simple-name>avgLineLengthModule</simple-name>
+      </proxy-module>
+      <!-- ... -->
+    </modules>
+    <connections>
+      <parent-to-child-connection
+        from-port="reads" to-module="avgLineLengthModule" to-port="text"/>
+      <!-- ... -->
+    </connections>
+  </template>
+</composite-module-declaration>{% endhighlight %}
+  </div>
+</div>
+
+<h1 id="related">Related Work</h1>
+<p>
+  Of course, dataflow programming is not a novel concept, and a lot of software tools exist that facilitate dataflow programming. The following gives a non-exhaustive comparison to existing tools and concepts.
+</p>
+
+<h2>Scientific Workflow Systems</h2>
+<p>
+  Scientific workflow systems are probably closest to CloudKeeper in motivation. However, whereas existing systems are primarily targeted at researchers, CloudKeeper’s focus is on software-engineering needs. As an example, the <a href="http://www.mygrid.org.uk">myGrid</a> team that also produced and develops the Taverna workflow system (see below), created the <a href="http://www.myexperiment.org/about">myExperiment</a> web site for sharing and collaborating on scientific workflow. While CloudKeeper dataflows could be shared in similar ways, the goal behind CloudKeeper is to treat dataflows as first-class software code – and reusing established software-engineering best practices as much as possible. That is, CloudKeeper dataflows are meant to be shared in the same way Java code artifacts are shared: In artifact repositories such as the <a href="http://central.sonatype.org">Central Repository</a> and using tools like <a href="http://www.sonatype.org/nexus/">Nexus</a> or <a href="https://www.jfrog.com/artifactory/">Artifactory</a>. Alternatively, CloudKeeper dataflows could also just be “inlined” in any JVM-based language.
+</p>
+<p>
+  The following list provides examples of existing scientific workflow systems. See Wikipedia for a <a href="https://en.wikipedia.org/wiki/Scientific_workflow_system">more comprehensive list</a>. Also note the <a href="https://w3id.org/cwl/">Common Workflow Language (CWL) working group</a> that is working towards a “vendor-neutral standard for representing workflows intended to be portable across a variety of computing platforms”.
+</p>
+<ul>
+  <li><a href="http://www.taverna.org.uk">Taverna</a></li>
+  <li><a href="http://pegasus.isi.edu">Pegasus</a></li>
+  <li><a href="http://pipeline.bmap.ucla.edu">LONI Pipeline</a></li>
+  <li><a href="http://anduril.org">Anduril</a></li>
+  <li><a href="http://www.unicore.eu">UNICORE</a></li>
+  <li><a href="http://www.nextflow.io/">Nextflow</a></li>
+</ul>
+
+<h2>Batch/Stream Processing</h2>
+<p>
+  Various solutions exist to transform and accumulate individual records in data sets. Unlike these solutions, CloudKeeper makes no assumptions about its inputs – which may be arbitrary Java objects. That is, CloudKeeper does not rely on a record model or the fact that inputs can be naturally split into “chunks”.
+</p>
+<ul>
+  <li><a href="https://jcp.org/en/jsr/detail?id=352">JSR 352: Batch Applications for the Java Platform (part of Java EE 7)</a></li>
+  <li><a href="http://spark.apache.org">Apache Spark</a></li>
+  <li><a href="http://projects.spring.io/spring-xd/">Spring XD</a></li>
+</ul>
+
+<script>
+  $('svg .module').click(function (e) {
+    e.preventDefault()
+    $('#dataflow-example-tabs a[data-module="' + $(e.target).parent().attr('id') + '"]').tab('show')
+  });
+  $('a[data-toggle="tab"]').on('show.bs.tab', function (e) {
+    visibles = $(e.target).data("visible")
+    previousVisibles = $(e.relatedTarget).data("visible")
+    $(visibles).not(previousVisibles).fadeTo("fast", 1)
+    $(previousVisibles).not(visibles).fadeTo("fast", 0.33)
+  });
+</script>

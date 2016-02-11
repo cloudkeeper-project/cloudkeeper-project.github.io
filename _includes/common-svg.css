@@ -1,0 +1,66 @@
+/* Sharing SVG definitions seems essentially impossible due to many browser
+   bugs: http://stackoverflow.com/a/27752594
+   We therefore inline this style sheet (and the corresponding SVG). */
+
+
+/* Dataflow diagrams */
+
+#port, .inport, .outport {
+  stroke: #be4b48;
+  stroke-width: 1;
+  fill: url(#port-gradient);
+  filter: url(#drop-shadow);
+}
+
+#port-fade-stop-1 {
+  stop-color: #ffe5e5;
+}
+
+#port-fade-stop-2 {
+  stop-color: #ffa2a1;
+}
+
+.module {
+  fill: white;
+  stroke: #be4b48;
+  stroke-width: 2;
+}
+
+#connection-marker {
+  fill: #33bef2;
+}
+
+.connection {
+  fill: none;
+  stroke: #33bef2;
+  stroke-width: 1.5;
+  marker-end: url(#connection-marker);
+}
+
+
+/* Informal flow charts */
+
+.step {
+  stroke: #149be0;
+  fill: url(#step-gradient);
+  stroke-width: 1;
+  filter: url(#drop-shadow);
+}
+
+#step-fade-stop-1 {
+  stop-color: #89d4ff;
+}
+
+#step-fade-stop-2 {
+  stop-color: #ddf2ff;
+}
+
+.transition {
+  stroke: #149be0;
+  stroke-width: 1.5;
+  marker-end: url(#transition-marker);
+}
+
+#transition-marker {
+  fill: #149be0;
+}

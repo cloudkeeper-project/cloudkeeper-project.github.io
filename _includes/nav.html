@@ -1,0 +1,49 @@
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand active" href="{{ '/' | prepend: site.baseurl }}">CloudKeeper</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <!-- This is: {{ page.url }} -->
+        {% for node in site.navigation %}
+          <!-- {{ node.url | prepend: site.baseurl }} -->
+          {% if page.url == node.url | prepend: site.baseurl %}
+            <li class="active"><a href="{{ node.exposedurl | prepend: site.baseurl }}">{{ node.shorttitle }} <span class="sr-only">(current)</span></a></li>
+          {% else %}
+            <li><a href="{{ node.exposedurl | prepend: site.baseurl }}">{{ node.shorttitle }}</a></li>
+          {% endif %}
+        {% endfor %}
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Documentation<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li class="dropdown-header">Slides</li>
+            <li><a href="{{ '/assets/slides/cloudkeeper-overview.pdf' | prepend: site.baseurl }}">CloudKeeper Overview</a></li>
+            <li><a href="{{ '/assets/slides/cloudkeeper-internals.pdf' | prepend: site.baseurl }}">CloudKeeper Internals</a></li>
+            <li><a href="{{ '/assets/slides/cloudkeeper-runtime.pdf' | prepend: site.baseurl }}">An “All-Inclusive” Runtime System</a></li>
+            <li role="separator" class="divider"></li>
+            <li class="dropdown-header">Specifications</li>
+            <li><a href="#">The Interpreter Component</a></li>
+          </ul>
+        </li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Developers<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="http://github.com/cloudkeeper-project">GitHub Site</a></li>
+            <li><a href="#">Maven-generated Site</a></li>
+            <li><a href="#">API Reference</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <a href="https://github.com/cloudkeeper-project">
+    <img id="logo" src="http://aral.github.com/fork-me-on-github-retina-ribbons/right-red@2x.png" alt="Fork me on GitHub" class="hidden-xs">
+  </a>
+</nav>

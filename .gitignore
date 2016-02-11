@@ -1,0 +1,16 @@
+# IntelliJ
+.idea/
+*.iml
+
+# bundler
+.bundle/
+# snapshot of all required gems and their dependencies
+Gemfile.lock
+
+# jekyll
+_site
+.sass-cache
+.jekyll-metadata
+
+# Mac OS X's Finder.app
+.DS_Store
