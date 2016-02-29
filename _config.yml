@@ -18,6 +18,7 @@ exclude:
   - Gemfile
   - Gemfile.lock
   - '*.iml'
+  - README.md
 
 navigation:
   -
